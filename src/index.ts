@@ -66,7 +66,9 @@ client.on('messageCreate', async (msg) => {
     ) return;
 
     if (msg.deletable) {
-        deleteMessage(msg);
+        setTimeout(()=>{
+            deleteMessage(msg);
+        },1000)
     }
 });
 

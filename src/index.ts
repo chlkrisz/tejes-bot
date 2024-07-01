@@ -26,19 +26,20 @@ client.on('ready', (c) => {
     console.log(`Logged in as ${c.user.tag}!`);
 });
 
-const longLetters = ["cs", "dz", "gy", "ly", "sz", "ty", "zs"]; //ha valaki ír egy olyan szót, ami dzs-re végződik és értelmes azt megtapsolom
+const longLetters = ["cs", "dz", "gy", "ly", "sz", "ty", "zs", "ny"]; //ha valaki ír egy olyan szót, ami dzs-re végződik és értelmes azt megtapsolom
 
 const szolancId = process.env.SZOLANCID!;
 const szolancLogId = process.env.SZOLANCLOGID!;
 
 
 client.on('messageCreate', async (msg) => {
-    if (msg.author.bot) return;
-
     const logChannel = client.channels.cache.get(szolancLogId) as TextChannel;
     if (!logChannel?.isTextBased()) return;
     if (msg.channelId !== szolancId) return;
-    
+                       // Tatsu
+    if (msg.author.id === "172002275412279296") deleteMessage(msg);
+    if (msg.author.bot) return;
+
     const lastMessages = await msg.channel.messages.fetch({ limit: 2 });
     const lastMessageContent = stripEmojisAndEmotes(lastMessages.last()?.cleanContent?.toLowerCase() || '');
     

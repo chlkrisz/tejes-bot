@@ -26,18 +26,17 @@ client.on('ready', (c) => {
     console.log(`Logged in as ${c.user.tag}!`);
 });
 
-const longLetters = ["cs", "dz", "gy", "ly", "sz", "ty", "zs", "ny"]; //ha valaki ír egy olyan szót, ami dzs-re végződik és értelmes azt megtapsolom
+const longLetters = ["cs", "dz", "gy", "ly", "sz", "ty", "zs", "ny"]; // wrosoly 👏
 
 const szolancId = process.env.SZOLANCID!;
 const szolancLogId = process.env.SZOLANCLOGID!;
-
 
 client.on('messageCreate', async (msg) => {
     const logChannel = client.channels.cache.get(szolancLogId) as TextChannel;
     if (!logChannel?.isTextBased()) return;
     if (msg.channelId !== szolancId) return;
                        // Tatsu
-    if (msg.author.id === "172002275412279296") deleteMessage(msg);
+    if (msg.author.id === "172002275412279296") await deleteMessage(msg);
     if (msg.author.bot) return;
 
     const lastMessages = await msg.channel.messages.fetch({ limit: 2 });
@@ -50,11 +49,11 @@ client.on('messageCreate', async (msg) => {
     const cleanContent = stripEmojisAndEmotes(msg.cleanContent.toLowerCase());
     
     if (!cleanContent && msg.deletable) {
-        return deleteMessage(msg);
+        return await deleteMessage(msg);
     }
 
     if (!exists(cleanContent)) {
-        logChannel.send(
+        await logChannel.send(
             `:exclamation: A(z) \`${cleanContent}\` szó nem található a magyar szótárban. [Ugrás az üzenethez](https://discord.com/channels/${msg.guildId}/${msg.channelId}/${msg.id})\n*Ez csak egy figyelmeztetés, a modok állapítsák meg, hogy értelmes szó-e, vagy spam.*`
         ).catch(console.error);
     }
@@ -65,11 +64,8 @@ client.on('messageCreate', async (msg) => {
         !containsEmojisOrEmotes(cleanContent)
     ) return;
 
-    if (msg.deletable) {
-        setTimeout(()=>{
-            deleteMessage(msg);
-        },1000)
-    }
+    await deleteMessage(msg);
+
 });
 
 const longLetter = (text: string) => longLetters.some(letter => text.endsWith(letter));
@@ -77,10 +73,12 @@ const longLetter = (text: string) => longLetters.some(letter => text.endsWith(le
 const exists = (text: string) => szavak.some(szo => text === szo.toLowerCase());
 
 const deleteMessage = async (msg: any) => {
-    try {
-        await msg.delete();
-    } catch (e) {
-        console.error(e);
+    if (msg.deletable) {
+        try {
+            await msg.delete();
+        } catch (e) {
+            console.error(e);
+        }
     }
 }
 
